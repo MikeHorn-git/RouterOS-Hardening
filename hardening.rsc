@@ -42,10 +42,10 @@
 /tool mac-server ping set enabled=no
 
 :put "[+] Disable mac server"
+/tool mac-server set allowed-interface-list=none
+
 :put "[+] Disable mac winbox"
-:foreach i in=[/tool mac-server mac-winbox find] do={
-    /tool mac-server mac-winbox set $i disabled=yes
-}
+/tool mac-server mac-winbox set allowed-interface-list=none
 
 :put "[+] Disable bandwidth-server"
 /tool bandwidth-server set enabled=no
