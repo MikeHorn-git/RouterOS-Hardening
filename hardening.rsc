@@ -56,7 +56,6 @@
 :put "[+] Disable neighbor discovery"
 /ip neighbor discovery-settings set discover-interface-list=none
 /ip neighbor discovery settings set default=no default-for-dynamic=no
-/ip neighbor discovery set [find] discover=no
 
 :put "[+] Disable IPv6 neighbor discovery"
 /ipv6 nd set [find] disabled=yes
