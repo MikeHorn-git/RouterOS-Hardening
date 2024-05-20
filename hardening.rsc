@@ -88,8 +88,8 @@
 :put "[+] Change default ssh port"
 /ip service set ssh port=2200
 
-:put "[+] Disable LCD module for compatible routerBOARD device"
 :do {
+    :put "[+] Disable LCD module for compatible routerBOARD device"
     /lcd set enabled=no
 } on-error={
     :put "[+] LCD command not found, skipping"
