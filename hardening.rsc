@@ -89,7 +89,11 @@
 /ip service set ssh port=2200
 
 :put "[+] Disable LCD module for compatible routerBOARD device"
-/lcd set enabled=no
+:do {
+    /lcd set enabled=no
+} on-error={
+    :put "[+] LCD command not found, skipping"
+}
 
 :put "[+] Create a config backup file named backup_config"
 /export compact file=backup_config
