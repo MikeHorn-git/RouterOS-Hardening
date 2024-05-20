@@ -14,6 +14,8 @@ This script is designed to harden your RouterOS device by disabling unnecessary 
 
 # Features
 * Update System Packages [Optional] (Need a valid license)
+* Create new user hardened (Need to change password, the temporary password is hardened)
+* Disable admin user
 * Disable Unnecessary Services (API, FTP, IP Cloud, Telnet, Proxy, SOCKS, UPNP, WWW, WWW-SSL)
 * Disable MAC Server (Ping, Server, Winbox)
 * Disable Bandwidth Server
@@ -23,15 +25,16 @@ This script is designed to harden your RouterOS device by disabling unnecessary 
 * Disable Router Management Overlay Network (ROMON)
 * Enable Reverse Path Filtering (RPF)
 * Enable Stronger SSH Crypto
+* Configure Logging to Disk
 * Configure NTP
 * Change SSH Port (2200)
 * Disable LCD Module [Optional] (Need a compatible RouterBoard)
-* Configure Logging to Disk
+* Build a Firewall [Partially]
 * Create Configuration Backup
 
 # Recommendations
 This part cannot be done automatically.
-* Firewall Configuration
+* Firewall Configuration [Partially]
 * Backup Strategy
-* Change Credentials / Users
+* Change credentials
 * Monitor Log File Size
