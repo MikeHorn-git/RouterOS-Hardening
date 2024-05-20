@@ -1,4 +1,4 @@
-![image](https://github.com/MikeHorn-git/RouterOS-Hardening/assets/123373126/ba17654b-7ee6-4f40-9781-ee4c160d508a)
+![image](https://github.com/MikeHorn-git/RouterOS-Hardening/assets/123373126/fec74d01-aa82-46ff-85dd-4059cb4ba272)
 
 # Warning
 Read a script before running it.
