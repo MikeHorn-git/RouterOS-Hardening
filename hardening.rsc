@@ -55,7 +55,6 @@
 
 :put "[+] Disable neighbor discovery"
 /ip neighbor discovery-settings set discover-interface-list=none
-/ip neighbor discovery settings set default=no default-for-dynamic=no
 
 :put "[+] Disable IPv6 neighbor discovery"
 /ipv6 nd set [find] disabled=yes
@@ -84,10 +83,16 @@
 :put "[+] Disable LCD module for compatible routerBOARD device"
 /lcd set enabled=no
 
-:put "[+] Create a config backup"
+:put "[+] Create a config backup file named backup_config"
 /export compact file=backup_config
 
-# Manual best practices
+:put "[+] Manual best practices recommendations"
+:put "* Consider configuring the appropriate firewall configurations to your need."
+:put "* Consider create a backup strategy."
+:put "* Consider to manually change credentials."
+:put "* Consider to regularly monitor the log file size."
+
+# Log recommendations
 :log info "Consider configuring the appropriate firewall configurations to your need."
 :log info "Consider create a backup strategy."
 :log info "Consider to manually change credentials."
