@@ -68,8 +68,16 @@
 :put "[+] Enable stronger crypto for SSH"
 /ip ssh set strong-crypto=yes
 
-:put "[+] Enabled logs on disk"
-/system logging action add name=disk target=disk disk-file-name=log
+:put "[+] Check if logging action 'disk' exists"
+:global logActionExists [/system logging action find where name="disk"]
+:if ($logActionExists = "") do={
+    :put "[+] Creating logging action 'disk'"
+    /system logging action add name=disk target=disk disk-file-name=log
+} else={
+    :put "[+] Logging action 'disk' already exists"
+}
+
+:put "[+] Set logging topics to use 'disk' action"
 /system logging add topics=info action=disk
 /system logging add topics=warning action=disk
 /system logging add topics=error action=disk
