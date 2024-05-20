@@ -76,7 +76,7 @@
 /system logging add topics=error action=disk
 
 :put "[+] Enable NTP clock synchronization"
-/system ntp client set enabled=yes server-dns-names=0.pool.ntp.org,1.pool.ntp.org,2.pool.ntp.org,3.pool.ntp.org
+/system ntp client set enabled=yes servers=0.pool.ntp.org,1.pool.ntp.org,2.pool.ntp.org,3.pool.ntp.org
 
 :put "[+] Change default ssh port"
 /ip service set ssh port=2200
