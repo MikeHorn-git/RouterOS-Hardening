@@ -103,54 +103,49 @@
 
 :put "[+] Build firewall"
 :do {
-    /ip firewall filter
-    add action=accept chain=input comment="default configuration" connection-state=established,related
-    add action=accept chain=input src-address-list=allowed_to_router
-    add action=drop chain=input protocol=icmp
-    add action=drop chain=input
+    /ip firewall filter add action=accept chain=input comment="default configuration" connection-state=established,related
+    /ip firewall filter add action=accept chain=input src-address-list=allowed_to_router
+    /ip firewall filter add action=drop chain=input protocol=icmp
+    /ip firewall filter add action=drop chain=input
 
-    /ip firewall address-list
-    add address=0.0.0.0/8 comment=RFC6890 list=not_in_internet
-    add address=172.16.0.0/12 comment=RFC6890 list=not_in_internet
-    add address=192.168.0.0/16 comment=RFC6890 list=not_in_internet
-    add address=10.0.0.0/8 comment=RFC6890 list=not_in_internet
-    add address=169.254.0.0/16 comment=RFC6890 list=not_in_internet
-    add address=127.0.0.0/8 comment=RFC6890 list=not_in_internet
-    add address=224.0.0.0/4 comment=Multicast list=not_in_internet
-    add address=198.18.0.0/15 comment=RFC6890 list=not_in_internet
-    add address=192.0.0.0/24 comment=RFC6890 list=not_in_internet
-    add address=192.0.2.0/24 comment=RFC6890 list=not_in_internet
-    add address=198.51.100.0/24 comment=RFC6890 list=not_in_internet
-    add address=203.0.113.0/24 comment=RFC6890 list=not_in_internet
-    add address=100.64.0.0/10 comment=RFC6890 list=not_in_internet
-    add address=240.0.0.0/4 comment=RFC6890 list=not_in_internet
-    add address=192.88.99.0/24 comment="6to4 relay Anycast [RFC 3068]" list=not_in_internet
+    /ip firewall address-list add address=0.0.0.0/8 comment=RFC6890 list=not_in_internet
+    /ip firewall address-list add address=172.16.0.0/12 comment=RFC6890 list=not_in_internet
+    /ip firewall address-list add address=192.168.0.0/16 comment=RFC6890 list=not_in_internet
+    /ip firewall address-list add address=10.0.0.0/8 comment=RFC6890 list=not_in_internet
+    /ip firewall address-list add address=169.254.0.0/16 comment=RFC6890 list=not_in_internet
+    /ip firewall address-list add address=127.0.0.0/8 comment=RFC6890 list=not_in_internet
+    /ip firewall address-list add address=224.0.0.0/4 comment=Multicast list=not_in_internet
+    /ip firewall address-list add address=198.18.0.0/15 comment=RFC6890 list=not_in_internet
+    /ip firewall address-list add address=192.0.0.0/24 comment=RFC6890 list=not_in_internet
+    /ip firewall address-list add address=192.0.2.0/24 comment=RFC6890 list=not_in_internet
+    /ip firewall address-list add address=198.51.100.0/24 comment=RFC6890 list=not_in_internet
+    /ip firewall address-list add address=203.0.113.0/24 comment=RFC6890 list=not_in_internet
+    /ip firewall address-list add address=100.64.0.0/10 comment=RFC6890 list=not_in_internet
+    /ip firewall address-list add address=240.0.0.0/4 comment=RFC6890 list=not_in_internet
+    /ip firewall address-list add address=192.88.99.0/24 comment="6to4 relay Anycast [RFC 3068]" list=not_in_internet
 
-    /ip firewall filter
-    add action=fasttrack-connection chain=forward comment=FastTrack connection-state=established,related
-    add action=accept chain=forward comment="Established, Related" connection-state=established,related
-    add action=drop chain=forward comment="Drop invalid" connection-state=invalid log=yes log-prefix=invalid
+    /ip firewall filter add action=fasttrack-connection chain=forward comment=FastTrack connection-state=established,related
+    /ip firewall filter add action=accept chain=forward comment="Established, Related" connection-state=established,related
+    /ip firewall filter add action=drop chain=forward comment="Drop invalid" connection-state=invalid log=yes log-prefix=invalid
 
-    /ipv6 firewall filter
-    add action=accept chain=forward comment=established,related connection-state=established,related
-    add action=drop chain=forward comment=invalid connection-state=invalid log=yes log-prefix=ipv6,invalid
-    add action=drop chain=forward log-prefix=IPV6
+    /ipv6 firewall filter add action=accept chain=forward comment=established,related connection-state=established,related
+    /ipv6 firewall filter add action=drop chain=forward comment=invalid connection-state=invalid log=yes log-prefix=ipv6,invalid
+    /ipv6 firewall filter add action=drop chain=forward log-prefix=IPV6
 } on-error={
     :put "[-] Error occurred while building firewall, skipping"
 }
-
 
 :put "[+] Create a config backup file named backup_config"
 /export compact file=backup_config
 
 :put "[+] Manual best practices recommendations"
-:put "* Consider configuring the appropriate firewall configurations to your need."
-:put "* Consider create a backup strategy."
-:put "* Consider to manually CHANGE credentials."
-:put "* Consider to regularly monitor the log file size."
+:put "[*] Consider configuring the appropriate firewall configurations to your need."
+:put "[*] Consider create a backup strategy."
+:put "[*] Consider to manually CHANGE credentials."
+:put "[*] Consider to regularly monitor the log file size."
 
 # Log recommendations
-:log info "Consider configuring the appropriate firewall configurations to your need."
-:log info "Consider create a backup strategy."
-:log info "Consider to manually CHANGE credentials."
-:log info "Consider to regularly monitor the log file size."
+:log info "[*] Consider configuring the appropriate firewall configurations to your need."
+:log info "[*] Consider create a backup strategy."
+:log info "[*] Consider to manually CHANGE credentials."
+:log info "[*] Consider to regularly monitor the log file size."
