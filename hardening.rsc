@@ -12,21 +12,21 @@
 
 :put "[+] Starting hardening script"
 
-# Update system packages
 :put "[+] Updating system packages"
 :do {
     /system package update check-for-updates
     /system package update install
 } on-error={
-    $handleError "Failed to update system packages"
+    :local errorMsg "Failed to update system packages"
+    $handleError $errorMsg
 }
 
-# Add new user and disable the admin user
 :put "[+] Adding new account named 'hardened'"
 :do {
     /user add name=hardened password=hardened group=full
 } on-error={
-    $handleError "Failed to add new user 'hardened'"
+    :local errorMsg "Failed to add new user 'hardened'"
+    $handleError $errorMsg
 }
 
 :if ( [/user find name=admin] != "" ) do={
@@ -34,141 +34,146 @@
     :do {
         /user disable admin
     } on-error={
-        $handleError "Failed to disable admin account"
+        :local errorMsg "Failed to disable admin account"
+        $handleError $errorMsg
     }
 } else={
-    $handleError "Admin account not found"
+    :local errorMsg "Admin account not found"
+    $handleError $errorMsg
 }
 
-# Disable unnecessary services
 :put "[+] Disabling unnecessary services"
 :foreach service in={ "api"; "api-ssl"; "telnet"; "ftp"; "www"; "www-ssl" } do={
     :do {
         /ip service disable [find name=$service]
     } on-error={
-        $handleError "Failed to disable $service service"
+        :local errorMsg ("Failed to disable " . $service . " service")
+        $handleError $errorMsg
     }
 }
 
-# Disable IP Cloud
 :put "[+] Disabling IP Cloud service"
 :do {
     /ip cloud set ddns-enabled=no update-time=no
 } on-error={
-    $handleError "Failed to disable IP Cloud service"
+    :local errorMsg "Failed to disable IP Cloud service"
+    $handleError $errorMsg
 }
 
-# Disable Proxy and Socks
 :put "[+] Disabling proxy and socks services"
 :do {
     /ip proxy set enabled=no
 } on-error={
-    $handleError "Failed to disable proxy service"
+    :local errorMsg "Failed to disable proxy service"
+    $handleError $errorMsg
 }
 :do {
     /ip socks set enabled=no
 } on-error={
-    $handleError "Failed to disable socks service"
+    :local errorMsg "Failed to disable socks service"
+    $handleError $errorMsg
 }
 
-# Disable UPNP
 :put "[+] Disabling UPNP service"
 :do {
     /ip upnp set enabled=no
 } on-error={
-    $handleError "Failed to disable UPNP service"
+    :local errorMsg "Failed to disable UPNP service"
+    $handleError $errorMsg
 }
 
-# Disable MAC server and related services
 :put "[+] Disabling MAC server and related services"
 :do {
     /tool mac-server ping set enabled=no
 } on-error={
-    $handleError "Failed to disable MAC ping"
+    :local errorMsg "Failed to disable MAC ping"
+    $handleError $errorMsg
 }
 :do {
     /tool mac-server set allowed-interface-list=none
 } on-error={
-    $handleError "Failed to disable MAC server"
+    :local errorMsg "Failed to disable MAC server"
+    $handleError $errorMsg
 }
 :do {
     /tool mac-server mac-winbox set allowed-interface-list=none
 } on-error={
-    $handleError "Failed to disable MAC winbox"
+    :local errorMsg "Failed to disable MAC winbox"
+    $handleError $errorMsg
 }
 
-# Disable Bandwidth server
 :put "[+] Disabling bandwidth-server"
 :do {
     /tool bandwidth-server set enabled=no
 } on-error={
-    $handleError "Failed to disable bandwidth-server"
+    :local errorMsg "Failed to disable bandwidth-server"
+    $handleError $errorMsg
 }
 
-# Disable DNS cache
 :put "[+] Disabling DNS cache"
 :do {
     /ip dns set allow-remote-requests=no
 } on-error={
-    $handleError "Failed to disable DNS cache"
+    :local errorMsg "Failed to disable DNS cache"
+    $handleError $errorMsg
 }
 
-# Disable Neighbor Discovery
 :put "[+] Disabling neighbor discovery"
 :do {
     /ip neighbor discovery-settings set discover-interface-list=none
 } on-error={
-    $handleError "Failed to disable neighbor discovery"
+    :local errorMsg "Failed to disable neighbor discovery"
+    $handleError $errorMsg
 }
 
-# Disable IPv6 Neighbor Discovery
 :put "[+] Disabling IPv6 neighbor discovery"
 :do {
     /ipv6 nd set [find] disabled=yes
 } on-error={
-    $handleError "Failed to disable IPv6 neighbor discovery"
+    :local errorMsg "Failed to disable IPv6 neighbor discovery"
+    $handleError $errorMsg
 }
 
-# Disable ROMON
 :put "[+] Disabling Router Management Overlay Network (ROMON)"
 :do {
     /tool romon set enabled=no
 } on-error={
-    $handleError "Failed to disable ROMON"
+    :local errorMsg "Failed to disable ROMON"
+    $handleError $errorMsg
 }
 
-# Enable Reverse Path Filtering (RPF)
 :put "[+] Enabling Reverse Path Filtering (RPF)"
 :do {
     /ip settings set rp-filter=strict
 } on-error={
-    $handleError "Failed to enable Reverse Path Filtering (RPF)"
+    :local errorMsg "Failed to enable Reverse Path Filtering (RPF)"
+    $handleError $errorMsg
 }
 
-# Enable stronger SSH crypto
 :put "[+] Enabling stronger crypto for SSH"
 :do {
     /ip ssh set strong-crypto=yes
 } on-error={
-    $handleError "Failed to enable stronger crypto for SSH"
+    :local errorMsg "Failed to enable stronger crypto for SSH"
+    $handleError $errorMsg
 }
 
-# Change default SSH port
 :put "[+] Changing default SSH port"
 :do {
     /ip service set ssh port=2200
 } on-error={
-    $handleError "Failed to change default SSH port"
+    :local errorMsg "Failed to change default SSH port"
+    $handleError $errorMsg
 }
 
-# Configure logging to disk if not already configured
 :put "[+] Configuring logging to disk"
 :global logActionExists [/system logging action find where name="disk"]
 :if ($logActionExists = "") do={
     :do {
         /system logging action add name=disk target=disk disk-file-name=log
     } on-error={
-        $handleError "Failed to create logging action 'disk'"
+        :local errorMsg "Failed to create logging action 'disk'"
+        $handleError $errorMsg
     }
     :put "[+] Logging action 'disk' created"
 } else={
@@ -177,28 +182,30 @@
 :do {
     /system logging add topics=info action=disk
 } on-error={
-    $handleError "Failed to add info logging to disk"
+    :local errorMsg "Failed to add info logging to disk"
+    $handleError $errorMsg
 }
 :do {
     /system logging add topics=warning action=disk
 } on-error={
-    $handleError "Failed to add warning logging to disk"
+    :local errorMsg "Failed to add warning logging to disk"
+    $handleError $errorMsg
 }
 :do {
     /system logging add topics=error action=disk
 } on-error={
-    $handleError "Failed to add error logging to disk"
+    :local errorMsg "Failed to add error logging to disk"
+    $handleError $errorMsg
 }
 
-# Enable NTP clock synchronization
 :put "[+] Enabling NTP clock synchronization"
 :do {
     /system ntp client set enabled=yes servers=0.pool.ntp.org,1.pool.ntp.org,2.pool.ntp.org,3.pool.ntp.org
 } on-error={
-    $handleError "Failed to enable NTP clock synchronization"
+    :local errorMsg "Failed to enable NTP clock synchronization"
+    $handleError $errorMsg
 }
 
-# Disable LCD Module if compatible
 :put "[+] Disabling LCD module (if available)"
 :do {
     /lcd set enabled=no
@@ -207,14 +214,12 @@
     :log error "[-] LCD command not found, skipping"
 }
 
-# Build firewall rules
 :put "[+] Building firewall rules"
 :do {
     /ip firewall filter add action=accept chain=input comment="default configuration" connection-state=established,related
     /ip firewall filter add action=accept chain=input src-address-list=allowed_to_router
     /ip firewall filter add action=drop chain=input protocol=icmp
     /ip firewall filter add action=drop chain=input
-
     /ip firewall address-list add address=0.0.0.0/8 comment=RFC6890 list=not_in_internet
     /ip firewall address-list add address=172.16.0.0/12 comment=RFC6890 list=not_in_internet
     /ip firewall address-list add address=192.168.0.0/16 comment=RFC6890 list=not_in_internet
@@ -230,24 +235,23 @@
     /ip firewall address-list add address=100.64.0.0/10 comment=RFC6890 list=not_in_internet
     /ip firewall address-list add address=240.0.0.0/4 comment=RFC6890 list=not_in_internet
     /ip firewall address-list add address=192.88.99.0/24 comment="6to4 relay Anycast [RFC 3068]" list=not_in_internet
-
     /ip firewall filter add action=fasttrack-connection chain=forward comment=FastTrack connection-state=established,related
     /ip firewall filter add action=accept chain=forward comment="Established, Related" connection-state=established,related
     /ip firewall filter add action=drop chain=forward comment="Drop invalid" connection-state=invalid log=yes log-prefix=invalid
-
     /ipv6 firewall filter add action=accept chain=forward comment=established,related connection-state=established,related
     /ipv6 firewall filter add action=drop chain=forward comment=invalid connection-state=invalid log=yes log-prefix=ipv6,invalid
     /ipv6 firewall filter add action=drop chain=forward log-prefix=IPV6
 } on-error={
-    $handleError "Failed to build firewall rules"
+    :local errorMsg "Failed to build firewall rules"
+    $handleError $errorMsg
 }
 
-# Create a config backup
 :put "[+] Creating a config backup file named 'backup_config'"
 :do {
     /export compact file=backup_config
 } on-error={
-    $handleError "Failed to create config backup"
+    :local errorMsg "Failed to create config backup"
+    $handleError $errorMsg
 }
 
 :put "[+] Hardening script completed"
