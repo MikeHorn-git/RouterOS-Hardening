@@ -6,13 +6,12 @@
 
 # Function to handle errors and log them
 :global handleError do={
-    :put "[-] Error: $1"
     :log error "[-] Error: $1"
 }
 
-:put "[+] Starting hardening script"
+:log "[+] Starting hardening script"
 
-:put "[+] Updating system packages"
+:log "[+] Updating system packages"
 :do {
     /system package update check-for-updates
     /system package update install
@@ -21,7 +20,7 @@
     $handleError $errorMsg
 }
 
-:put "[+] Adding new account named 'hardened'"
+:log "[+] Adding new account named 'hardened'"
 :do {
     /user add name=hardened password=hardened group=full
 } on-error={
@@ -30,7 +29,7 @@
 }
 
 :if ( [/user find name=admin] != "" ) do={
-    :put "[+] Disabling admin account"
+    :log "[+] Disabling admin account"
     :do {
         /user disable admin
     } on-error={
@@ -42,7 +41,7 @@
     $handleError $errorMsg
 }
 
-:put "[+] Disabling unnecessary services"
+:log "[+] Disabling unnecessary services"
 :foreach service in={ "api"; "api-ssl"; "telnet"; "ftp"; "www"; "www-ssl" } do={
     :do {
         /ip service disable [find name=$service]
@@ -52,7 +51,7 @@
     }
 }
 
-:put "[+] Disabling IP Cloud service"
+:log "[+] Disabling IP Cloud service"
 :do {
     /ip cloud set ddns-enabled=no update-time=no
 } on-error={
@@ -60,7 +59,7 @@
     $handleError $errorMsg
 }
 
-:put "[+] Disabling proxy and socks services"
+:log "[+] Disabling proxy and socks services"
 :do {
     /ip proxy set enabled=no
 } on-error={
@@ -74,7 +73,7 @@
     $handleError $errorMsg
 }
 
-:put "[+] Disabling UPNP service"
+:log "[+] Disabling UPNP service"
 :do {
     /ip upnp set enabled=no
 } on-error={
@@ -82,7 +81,7 @@
     $handleError $errorMsg
 }
 
-:put "[+] Disabling MAC server and related services"
+:log "[+] Disabling MAC server and related services"
 :do {
     /tool mac-server ping set enabled=no
 } on-error={
@@ -102,7 +101,7 @@
     $handleError $errorMsg
 }
 
-:put "[+] Disabling bandwidth-server"
+:log "[+] Disabling bandwidth-server"
 :do {
     /tool bandwidth-server set enabled=no
 } on-error={
@@ -110,7 +109,7 @@
     $handleError $errorMsg
 }
 
-:put "[+] Disabling DNS cache"
+:log "[+] Disabling DNS cache"
 :do {
     /ip dns set allow-remote-requests=no
 } on-error={
@@ -118,7 +117,7 @@
     $handleError $errorMsg
 }
 
-:put "[+] Disabling neighbor discovery"
+:log "[+] Disabling neighbor discovery"
 :do {
     /ip neighbor discovery-settings set discover-interface-list=none
 } on-error={
@@ -126,7 +125,7 @@
     $handleError $errorMsg
 }
 
-:put "[+] Disabling IPv6 neighbor discovery"
+:log "[+] Disabling IPv6 neighbor discovery"
 :do {
     /ipv6 nd set [find] disabled=yes
 } on-error={
@@ -134,7 +133,7 @@
     $handleError $errorMsg
 }
 
-:put "[+] Disabling Router Management Overlay Network (ROMON)"
+:log "[+] Disabling Router Management Overlay Network (ROMON)"
 :do {
     /tool romon set enabled=no
 } on-error={
@@ -142,7 +141,7 @@
     $handleError $errorMsg
 }
 
-:put "[+] Enabling Reverse Path Filtering (RPF)"
+:log "[+] Enabling Reverse Path Filtering (RPF)"
 :do {
     /ip settings set rp-filter=strict
 } on-error={
@@ -150,7 +149,7 @@
     $handleError $errorMsg
 }
 
-:put "[+] Enabling stronger crypto for SSH"
+:log "[+] Enabling stronger crypto for SSH"
 :do {
     /ip ssh set strong-crypto=yes
 } on-error={
@@ -158,7 +157,7 @@
     $handleError $errorMsg
 }
 
-:put "[+] Changing default SSH port"
+:log "[+] Changing default SSH port"
 :do {
     /ip service set ssh port=2200
 } on-error={
@@ -166,7 +165,7 @@
     $handleError $errorMsg
 }
 
-:put "[+] Configuring logging to disk"
+:log "[+] Configuring logging to disk"
 :global logActionExists [/system logging action find where name="disk"]
 :if ($logActionExists = "") do={
     :do {
@@ -175,9 +174,9 @@
         :local errorMsg "Failed to create logging action 'disk'"
         $handleError $errorMsg
     }
-    :put "[+] Logging action 'disk' created"
+    :log "[+] Logging action 'disk' created"
 } else={
-    :put "[+] Logging action 'disk' already exists"
+    :log "[+] Logging action 'disk' already exists"
 }
 :do {
     /system logging add topics=info action=disk
@@ -198,7 +197,7 @@
     $handleError $errorMsg
 }
 
-:put "[+] Enabling NTP clock synchronization"
+:log "[+] Enabling NTP clock synchronization"
 :do {
     /system ntp client set enabled=yes servers=0.pool.ntp.org,1.pool.ntp.org,2.pool.ntp.org,3.pool.ntp.org
 } on-error={
@@ -206,15 +205,15 @@
     $handleError $errorMsg
 }
 
-:put "[+] Disabling LCD module (if available)"
+:log "[+] Disabling LCD module (if available)"
 :do {
     /lcd set enabled=no
 } on-error={
-    :put "[-] LCD command not found, skipping"
+    :log "[-] LCD command not found, skipping"
     :log error "[-] LCD command not found, skipping"
 }
 
-:put "[+] Building firewall rules"
+:log "[+] Building firewall rules"
 :do {
     /ip firewall filter add action=accept chain=input comment="default configuration" connection-state=established,related
     /ip firewall filter add action=accept chain=input src-address-list=allowed_to_router
@@ -246,7 +245,7 @@
     $handleError $errorMsg
 }
 
-:put "[+] Creating a config backup file named 'backup_config'"
+:log "[+] Creating a config backup file named 'backup_config'"
 :do {
     /export compact file=backup_config
 } on-error={
@@ -254,4 +253,4 @@
     $handleError $errorMsg
 }
 
-:put "[+] Hardening script completed"
+:log "[+] Hardening script completed"
